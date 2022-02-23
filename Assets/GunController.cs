@@ -7,26 +7,27 @@ using UnityEngine.UI;
 public class GunController : MonoBehaviour
 {
 
-    private AudioSource shoot;
+    // Gun animation and audio variables
+    AudioSource shoot;
     Animator animGun;
-
+    
+    // Gong GameObject, animation and audio variables
     [Header("Gong Settings")]
     public GameObject Gong;
     Animator animGong;
     private AudioSource soundGong;
 
 
+    // Gun animation variables
     int fireHash = Animator.StringToHash("Fire");
     int idleHash = Animator.StringToHash("IdleGun");
 
     int hitGongHash = Animator.StringToHash("Hit");
 
+    // Variables controlling the player's ammo and whether or not they can shoot
     [Header("Gun Settings")]
     public float fireRate = 0.5f;
     public int clipSize = 12;
-
-
-    // Variables controlling the player's ammo and whether or not they can shoot
     bool _canShoot;
     int _currentAmmoInClip;
 
@@ -40,6 +41,8 @@ public class GunController : MonoBehaviour
     public Text ammoText;
     public Text reserveAmmoText;
 
+    bool getShot = true;
+
 
     public void Start(){
         // When the game starts, set the current ammo in the player's clip to clipSize and allow them to shoot
@@ -48,6 +51,7 @@ public class GunController : MonoBehaviour
         ammoText.text = _currentAmmoInClip.ToString();
         reserveAmmoText.text = "/0";
 
+        // Assigning animation and audio source variables to their respective components
         shoot = GetComponent<AudioSource>();
         animGun = GetComponent<Animator>();
         animGong = Gong.GetComponent<Animator>();
@@ -68,54 +72,32 @@ public class GunController : MonoBehaviour
     }
     
     void RayCast(){
+        // New RaycastHit variable called hit
         RaycastHit hit;
 
+        
         if(Physics.Raycast(transform.parent.position, transform.parent.forward, out hit, Mathf.Infinity)){
             if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Gong")){
-                Debug.Log("Gong");
+                //if Raycast hits a gameObject that is a layer called "Gong", play the gong animation and sound
                 animGong.SetTrigger(hitGongHash);
                 soundGong.Play();
             }
             if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Enemy")){
                 Debug.Log("Zombie");
-                ScriptType script = WhatIHit.collider.GetComponent<ScriptType>();
-                if(script!=null){
-                    script.isDead = true;
-                }
+                //if Raycast hits a gameObject that is a layer called "Enemy", send the gameObject's script a call to the getShot() function
+                var EH = hit.collider.gameObject.GetComponent<ZombieScript>();
+                EH.getShot();
             }
-        }
-        
-        //If Enemy is hit
-        // if(Physics.Raycast(transform.parent.position, transform.parent.forward, out hit, 1 << LayerMask.NameToLayer("Enemy"))){
-        //     try{
-        //         Debug.Log("Hit an enemy");
-        //         Rigidbody rb = hit.transform.GetComponent<Rigidbody>();
-        //         rb.constraints = RigidbodyConstraints.None;
-        //         rb.AddForce(transform.parent.transform.forward * 500);
-        //     }catch{            }
-        // }
-        // if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Gong")){
-        //     try{
-        //         Debug.Log("Hit gong");
-        //         animGong.SetTrigger(hitGongHash);
-        //         // Rigidbody rb = hit.transform.GetComponent<Rigidbody>();
-        //         // rb.constraints = RigidbodyConstraints.None;
-        //         // rb.AddForce(transform.parent.transform.forward * 500);
-        //     }catch{            }
-        // }
-        
+        }        
     }
 
-    void RayCastForGong(){
-        RaycastHit hit;
-        
-    }
 
     IEnumerator ShootGun(){
-
+        // set the animation trigger to fire the gun
         animGun.SetTrigger(fireHash);
+        // call the MuzzleFlash CoRoutine
         StartCoroutine(MuzzleFlash());
-
+        //Call the RayCast() function
         RayCast();
         
         // Wait the amount of seconds the fireRate is set to before allowing the user to shoot again
@@ -124,9 +106,12 @@ public class GunController : MonoBehaviour
     }
 
     IEnumerator MuzzleFlash(){
+        //flash the muzzleFlash Image
         muzzleFlashImage.sprite = flashes[Random.Range(0, flashes.Length)];
         muzzleFlashImage.color = Color.white;
+        //wait 0.05 seconds
         yield return new WaitForSeconds(0.05f);
+        //reset the muzzleFlash image to a clear image with no colour
         muzzleFlashImage.sprite = null;
         muzzleFlashImage.color = new Color(0, 0, 0, 0);
     }
