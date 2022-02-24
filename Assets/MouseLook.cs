@@ -12,6 +12,9 @@ public class MouseLook : MonoBehaviour
 
     float xRotation = 0f;
 
+    public bool win = false;
+    public bool lose = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,17 +25,26 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Take mouse input by setting mouseX and mouseY variables to the current x and y location of the mouse * the sensitivity *
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-        // Rotate the camera up and down
-        xRotation -= mouseY;
-        //do not allow the player to look behind itself from up and down rotations by Clamping
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        if(win == false && lose == false){
+            // Take mouse input by setting mouseX and mouseY variables to the current x and y location of the mouse * the sensitivity *
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            // Rotate the camera up and down
+            xRotation -= mouseY;
+            //do not allow the player to look behind itself from up and down rotations by Clamping
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        // Rotate left and right
-        playerBody.Rotate(Vector3.up * mouseX);
+            // Rotate left and right
+            playerBody.Rotate(Vector3.up * mouseX);
+        }
 
+    }
+    public void Win(){
+        win = true;
+    }
+
+    public void Lose(){
+        lose = true;
     }
 }
