@@ -88,6 +88,7 @@ public class ZombieScript : MonoBehaviour
                 //if the idleTime is more than 0, do nothing except decrease idletime by the current time in seconds
                 if (idleTime > 0){
                     idleTime -= Time.deltaTime;
+                    animZombie.SetTrigger("Idle");
                 }else{
                     //reset wander or idle to another random number between 0 and 1
                     WanderorIdle = Random.Range(0.0f, 1.0f);
