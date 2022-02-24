@@ -41,10 +41,12 @@ public class MouseLook : MonoBehaviour
 
     }
     public void Win(){
+        //called by another script to determine the state of the game as a win
         win = true;
     }
 
     public void Lose(){
+        //called by another script to determine the state of the game as a loss
         lose = true;
     }
 }

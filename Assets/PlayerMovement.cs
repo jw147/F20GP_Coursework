@@ -79,10 +79,14 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if(CharacterHealth <= 0){
+            //update the UI
             health.text = 0.ToString();
+            //set the game as a loss
             lose = true;
+            //load the Loss sprite into the Image
             Death.sprite = deathSprite;
             Death.color = Color.white;
+            //tell the other scripts that the game is lost
             var Lose = Player.GetComponent<GunController>();
             Lose.Lose();
             var Lose2 = Camera.GetComponent<MouseLook>();
@@ -91,14 +95,17 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void Win(){
+        //called by another script to determine the state of the game as a win
         win = true;
     }
 
     public void Lose(){
+        //function that determines the state of the game as a loss
         lose = true;
     }
 
     public void getHit(){
+        //called by another script to decrement the player's health by 2
         CharacterHealth = CharacterHealth - 2;
     }
 }
